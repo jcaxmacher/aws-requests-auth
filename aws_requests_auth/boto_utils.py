@@ -18,7 +18,7 @@ def get_credentials(credentials_obj=None, profile_name=None):
     http://boto3.readthedocs.io/en/latest/guide/configuration.html#configuring-credentials
     """
     if credentials_obj is None:
-        credentials_obj = Session(profile_name=profile_name).get_credentials()
+        credentials_obj = Session(profile=profile_name).get_credentials()
     # use get_frozen_credentials to avoid the race condition where one or more
     # properties may be refreshed and the other(s) not refreshed
     frozen_credentials = credentials_obj.get_frozen_credentials()
@@ -44,7 +44,7 @@ class BotoAWSRequestsAuth(AWSRequestsAuth):
         http://boto3.readthedocs.io/en/latest/guide/configuration.html#configuring-credentials
         """
         super(BotoAWSRequestsAuth, self).__init__(None, None, aws_host, aws_region, aws_service)
-        self._refreshable_credentials = Session(profile_name=profile_name).get_credentials()
+        self._refreshable_credentials = Session(profile=profile_name).get_credentials()
 
     def get_aws_request_headers_handler(self, r):
         # provide credentials explicitly during each __call__, to take advantage
