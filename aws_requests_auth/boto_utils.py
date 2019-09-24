@@ -9,7 +9,7 @@ from botocore.session import Session
 from .aws_auth import AWSRequestsAuth
 
 
-def get_credentials(credentials_obj=None):
+def get_credentials(credentials_obj=None, profile_name=None):
     """
     Interacts with boto to retrieve AWS credentials, and returns a dictionary of
     kwargs to be used in AWSRequestsAuth. boto automatically pulls AWS credentials from
@@ -18,7 +18,7 @@ def get_credentials(credentials_obj=None):
     http://boto3.readthedocs.io/en/latest/guide/configuration.html#configuring-credentials
     """
     if credentials_obj is None:
-        credentials_obj = Session().get_credentials()
+        credentials_obj = Session(profile_name=profile_name).get_credentials()
     # use get_frozen_credentials to avoid the race condition where one or more
     # properties may be refreshed and the other(s) not refreshed
     frozen_credentials = credentials_obj.get_frozen_credentials()
@@ -31,7 +31,7 @@ def get_credentials(credentials_obj=None):
 
 class BotoAWSRequestsAuth(AWSRequestsAuth):
 
-    def __init__(self, aws_host, aws_region, aws_service):
+    def __init__(self, aws_host, aws_region, aws_service, profile_name=None):
         """
         Example usage for talking to an AWS Elasticsearch Service:
 
@@ -43,7 +43,7 @@ class BotoAWSRequestsAuth(AWSRequestsAuth):
         automatically from the environment, in the order described here:
         http://boto3.readthedocs.io/en/latest/guide/configuration.html#configuring-credentials
         """
-        super(BotoAWSRequestsAuth, self).__init__(None, None, aws_host, aws_region, aws_service)
+        super(BotoAWSRequestsAuth, self).__init__(None, None, aws_host, aws_region, aws_service, profile_name=profile_name)
         self._refreshable_credentials = Session().get_credentials()
 
     def get_aws_request_headers_handler(self, r):
